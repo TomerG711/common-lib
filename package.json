@@ -1,0 +1,7 @@
+{
+  "name": "common-lib",
+  "version": "1.0.0",
+  "dependencies": {
+    "kafkajs": "^1.12.0"
+  }
+}
