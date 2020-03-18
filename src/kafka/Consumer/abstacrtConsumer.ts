@@ -1,4 +1,4 @@
-import {Consumer, Kafka, logLevel} from "kafkajs";
+import {Consumer, Kafka, logLevel, SASLOptions} from "kafkajs";
 import {Caster} from "../../caster/caster";
 import {IceCubeEvent} from "../../models/event/iceCubeEvent";
 import {KafkaMessage} from "../../models/message/kafkaMessage";
@@ -11,8 +11,12 @@ export abstract class AbstractKafkaConsumer {
     private consumer: Consumer;
     protected caster: Caster;
 
-    protected constructor(logLevel: logLevel, groupId: string, topic: string, brokers: string[]) {
-        this.kafkaClient = new Kafka({logLevel: logLevel, brokers: brokers, clientId: groupId});
+    protected constructor(logLevel: logLevel, groupId: string, topic: string, brokers: string[], saslConfig?: SASLOptions) {
+        let kafkaConfig = {logLevel: logLevel, brokers: brokers, clientId: groupId};
+        if (saslConfig != null) {
+            kafkaConfig["sasl"] = saslConfig;
+        }
+        this.kafkaClient = new Kafka(kafkaConfig);
         this.topic = topic;
         this.consumer = this.kafkaClient.consumer({groupId: groupId});
     }
