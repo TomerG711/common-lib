@@ -2,6 +2,7 @@ import {Producer, Kafka, logLevel, SASLOptions} from "kafkajs";
 import {KafkaMessage} from "../../models/message/kafkaMessage";
 import {IceCubeEvent} from "../../models/event/iceCubeEvent";
 import {Caster} from "../../caster/caster";
+import {stringify} from "querystring";
 
 
 export abstract class AbstractKafkaProducer {
@@ -18,7 +19,7 @@ export abstract class AbstractKafkaProducer {
         }
         this.kafkaClient = new Kafka(kafkaConfig);
         this.topic = topic;
-        this.producer = this.kafkaClient.producer({idempotent: true, maxInFlightRequests: 1});
+        this.producer = this.kafkaClient.producer({idempotent: true, maxInFlightRequests: 1, transactionalId: '123'});
     }
 
     public async sendMessage(event: IceCubeEvent) {
@@ -27,7 +28,7 @@ export abstract class AbstractKafkaProducer {
             let message: KafkaMessage = this.caster.iceCubeEventToKafkaMessage((event));
             await transaction.send({
                 topic: this.topic,
-                messages: [{key: message.value["transactionId"], value: message.value, headers: message.headers}]
+                messages: [{value: JSON.stringify(message.value), headers: message.headers}]
             });
             await transaction.commit();
         } catch (e) {
