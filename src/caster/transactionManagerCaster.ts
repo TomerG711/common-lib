@@ -22,8 +22,8 @@ export class TransactionManagerCaster implements Caster {
         let transactionId = kafkaMessage.value["transactionId"];
         let stepName = kafkaMessage.value["stepName"];
         let data = kafkaMessage.value["data"];
-        let serviceName = kafkaMessage.headers["serviceName"];
-        let operation = kafkaMessage.headers["operation"];
+        let serviceName = kafkaMessage.headers["serviceName"] as string;
+        let operation = kafkaMessage.headers["operation"] as string;
         return new TransactionManagerEvent(transactionId, stepName, data, serviceName, operation);
     }
 

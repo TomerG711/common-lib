@@ -24,8 +24,8 @@ export class ServiceEventCaster implements Caster {
         let stepName = kafkaMessage.value["stepName"];
         let data = kafkaMessage.value["data"];
         let result: Result = kafkaMessage.value["result"];
-        let serviceName = kafkaMessage.headers["serviceName"];
-        let operation = kafkaMessage.headers["operation"];
+        let serviceName = kafkaMessage.headers["serviceName"] as string;
+        let operation = kafkaMessage.headers["operation"] as string;
         return new ServiceEvent(transactionId, stepName, data, result, serviceName, operation);
     }
 
