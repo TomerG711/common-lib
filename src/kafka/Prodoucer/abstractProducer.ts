@@ -12,7 +12,7 @@ export abstract class AbstractKafkaProducer {
     protected caster: Caster;
 
     protected constructor(logLevel: logLevel, clientId: string, topic: string, brokers: string[], saslConfig?: SASLOptions) {
-        let kafkaConfig = {logLevel: logLevel, brokers: brokers};
+        let kafkaConfig = {logLevel: logLevel, brokers: brokers, clientId: clientId};
         if (saslConfig != null) {
             kafkaConfig["sasl"] = saslConfig;
         }

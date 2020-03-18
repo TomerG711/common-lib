@@ -11,8 +11,8 @@ export abstract class AbstractKafkaConsumer {
     private consumer: Consumer;
     protected caster: Caster;
 
-    protected constructor(logLevel: logLevel, groupId: string, topic: string, brokers: string[], saslConfig?: SASLOptions) {
-        let kafkaConfig = {logLevel: logLevel, brokers: brokers, clientId: groupId};
+    protected constructor(logLevel: logLevel, clientId: string, groupId: string, topic: string, brokers: string[], saslConfig?: SASLOptions) {
+        let kafkaConfig = {logLevel: logLevel, brokers: brokers, clientId: clientId};
         if (saslConfig != null) {
             kafkaConfig["sasl"] = saslConfig;
         }
