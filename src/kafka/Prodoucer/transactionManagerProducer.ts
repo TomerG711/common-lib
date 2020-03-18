@@ -1,6 +1,6 @@
 import {logLevel} from "kafkajs";
 import {AbstractKafkaProducer} from "./abstractProducer";
-import {TransactionManagerCaster} from "../../eventSchemas/Caster/transactionManagerCaster";
+import {TransactionManagerCaster} from "../../caster/transactionManagerCaster";
 
 export class TransactionManagerProducer extends AbstractKafkaProducer {
     public constructor(logLevel: logLevel, clientId: string, topic: string, brokers: string[]) {

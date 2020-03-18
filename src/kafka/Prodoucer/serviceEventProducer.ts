@@ -1,6 +1,6 @@
 import {logLevel} from "kafkajs";
 import {AbstractKafkaProducer} from "./abstractProducer";
-import {ServiceEventCaster} from "../../eventSchemas/Caster/serviceEventCaster";
+import {ServiceEventCaster} from "../../caster/serviceEventCaster";
 
 export class ServiceEventProducer extends AbstractKafkaProducer {
     public constructor(logLevel: logLevel, clientId: string, topic: string, brokers: string[]) {

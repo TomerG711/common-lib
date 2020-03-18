@@ -1,14 +1,15 @@
 import {Producer, Kafka, logLevel} from "kafkajs";
-import {ICaster} from "../../eventSchemas/Caster/ICaster";
-import {KafkaMessage} from "../../eventSchemas/Caster/kafkaMessage";
-import {KafkaEvent} from "../../eventSchemas/kafkaEvent";
+import {KafkaMessage} from "../../models/message/kafkaMessage";
+import {IceCubeEvent} from "../../models/event/iceCubeEvent";
+import {Caster} from "../../caster/caster";
+
 
 export abstract class AbstractKafkaProducer {
 
     private kafkaClient: Kafka;
     private readonly topic: string;
     private producer: Producer;
-    protected caster: ICaster;
+    protected caster: Caster;
 
     protected constructor(logLevel: logLevel, clientId: string, topic: string, brokers: string[]) {
         this.kafkaClient = new Kafka({logLevel: logLevel, brokers: brokers});
@@ -16,11 +17,10 @@ export abstract class AbstractKafkaProducer {
         this.producer = this.kafkaClient.producer({idempotent: true, maxInFlightRequests: 1});
     }
 
-    public async sendMessage(event: KafkaEvent) {
+    public async sendMessage(event: IceCubeEvent) {
         let transaction = await this.producer.transaction();
         try {
-            let message: KafkaMessage = this.caster.kafkaEventToKafkaMessage((event));
-            // let headers = [{serviceName: serviceName, operation: operation}];
+            let message: KafkaMessage = this.caster.iceCubeEventToKafkaMessage((event));
             await transaction.send({
                 topic: this.topic,
                 messages: [{key: message.value["transactionId"], value: message.value, headers: message.headers}]
