@@ -27,8 +27,11 @@ export abstract class AbstractKafkaConsumer {
         return this.consumer.run({
                 eachMessage: async ({message}) => {
                     let message_value_object = JSON.parse(message.value.toString());
-                    let message_header = message.headers;
-                    let kafkaMessage = new KafkaMessage(message_value_object, message_header);
+                    let message_headers = {};
+                    for (let header in message.headers) {
+                        message_headers[header] = message.headers[header].toString();
+                    }
+                    let kafkaMessage = new KafkaMessage(message_value_object, message_headers);
                     return callback(this.caster.kafkaMessageToIceCubeEvent(kafkaMessage))
                 }
             }
