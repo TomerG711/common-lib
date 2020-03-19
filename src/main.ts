@@ -1,28 +1,27 @@
-//13.90.42.100:9092
-//topic name: test
-// username="admin"
-// password="admin-secret"
-
-import {ServiceEventProducer} from "./kafka/Prodoucer/serviceEventProducer";
 import {logLevel, SASLMechanism} from "kafkajs";
 import {Result, ResultStatus, ServiceEvent} from "./models/event/serviceEvent";
-import {TransactionManagerConsumer} from "./kafka/Consumer/transactionManagerConsumer";
 import {IceCubeEvent} from "./models/event/iceCubeEvent";
+import {ServiceEventProducerBuilder} from "./kafka/prodoucer/builder/serviceEventProducerBuilder";
+import {TransactionManagerConsumerBuilder} from "./kafka/consumer/builder/transactionManagerConsumerBuilder";
 
 async function main() {
     let saslMechanism = {mechanism: 'scram-sha-256' as SASLMechanism, username: 'admin', password: 'admin-secret'};
-    let brokers = ['13.90.42.100:9092'];
-    let producer = new ServiceEventProducer(logLevel.DEBUG, 'test-client', 'test', brokers, saslMechanism);
-    //transactionId: string, stepName: string, data: object, serviceName: string, operation: string
+    let brokers = ['onmydick.com:9092'];
+    let producerBuilder = new ServiceEventProducerBuilder();
+    let producer = producerBuilder.setBrokers(brokers).setClientId('test-client').setLogLevel(logLevel.INFO).setTopic('test').setTransactionalId('id').setSASLOptions(saslMechanism).build();
     let message = new ServiceEvent('1', 'testStep', {'some-key': 'some-value'},
         new Result(ResultStatus.SUCCESS, {'some-data': 'data'}), 'testService', 'operation-test');
     await producer.sendMessage(message);
-    let consumer = new TransactionManagerConsumer(logLevel.DEBUG, 'test-client', 'test-group',
-        'test', brokers, saslMechanism);
+    let consumerBuilder = new TransactionManagerConsumerBuilder();
+    let consumer = consumerBuilder.setBrokers(brokers).setClientId('test-client').setLogLevel(logLevel.INFO).setTopic('test').setSASLOptions(saslMechanism).setGroupId('test-group').build();
     await consumer.getMessage(callback);
+    message = new ServiceEvent('2', 'testStep2', {'some-key2': 'some-value2'},
+        new Result(ResultStatus.SUCCESS, {'some-data': 'data'}), 'testService', 'operation-test');
+    await producer.sendMessage(message);
 }
 
 function callback(serviceEvent: IceCubeEvent) {
+    console.log("in callback");
     console.log(serviceEvent);
 }
 
