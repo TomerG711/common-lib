@@ -2,7 +2,6 @@ import {Producer, Kafka, logLevel, SASLOptions} from "kafkajs";
 import {KafkaMessage} from "../../models/message/kafkaMessage";
 import {IceCubeEvent} from "../../models/event/iceCubeEvent";
 import {Caster} from "../../caster/caster";
-import {stringify} from "querystring";
 
 
 export abstract class AbstractKafkaProducer {
@@ -12,14 +11,19 @@ export abstract class AbstractKafkaProducer {
     private producer: Producer;
     protected caster: Caster;
 
-    protected constructor(logLevel: logLevel, clientId: string, topic: string, brokers: string[], saslConfig?: SASLOptions) {
+
+    protected constructor(logLevel: logLevel, clientId: string, topic: string, brokers: string[], transactionalId: string, saslConfig?: SASLOptions) {
         let kafkaConfig = {logLevel: logLevel, brokers: brokers, clientId: clientId};
         if (saslConfig != null) {
             kafkaConfig["sasl"] = saslConfig;
         }
         this.kafkaClient = new Kafka(kafkaConfig);
         this.topic = topic;
-        this.producer = this.kafkaClient.producer({idempotent: true, maxInFlightRequests: 1, transactionalId: '123'});
+        this.producer = this.kafkaClient.producer({
+            idempotent: true,
+            maxInFlightRequests: 1,
+            transactionalId: transactionalId
+        });
     }
 
     public async sendMessage(event: IceCubeEvent) {
