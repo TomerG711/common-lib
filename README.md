@@ -55,12 +55,12 @@ operation | string | The operation name (for identifying the transaction)
 For both producer and consumer, we've decided it's best to use the builder design pattern. 
 We want to offer as much flexibility as possible, and the builder design pattern helps us to achieve that.
 Thus, the producer and the consumer should not be created directly, but using the builders.
-
+Since we have 2 implementations of consumers, and 2 of producers (for services and transaction manager), we have total of
+4 builders: ServiceEventConsumerBuilder, TransactionManagerConsumerBuilder, ServiceEventProducerBuilder, TransactionManagerProducerBuilder.
 ### Producer
 Produces messages to Kafka topic.
-Works with transactions only, as we decided we want to be sure each message arrived to every broker.
-Since we have 2 implementations of consumers, and 2 of producers (for services and transaction manager), we have total of
-4 builders.
+The producer work with transactions only, as we decided we want to be sure each message arrived to every broker.
+
 
 Properties:
 
