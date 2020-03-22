@@ -31,13 +31,17 @@ export abstract class kafkaProducer {
         });
     }
 
-    public async sendMessage(event: IceCubeEvent) {
+    public async sendMessage(iceCubeEvent: IceCubeEvent) {
         let transaction = await this.producer.transaction();
         try {
-            let message: KafkaMessage = this.caster.iceCubeEventToKafkaMessage((event));
+            let message: KafkaMessage = this.caster.iceCubeEventToKafkaMessage((iceCubeEvent));
             await transaction.send({
                 topic: this.topic,
-                messages: [{value: JSON.stringify(message.value), headers: message.headers}]
+                messages: [{
+                    key: iceCubeEvent.transactionId,
+                    value: JSON.stringify(message.value),
+                    headers: message.headers
+                }]
             });
             await transaction.commit();
         } catch (e) {
