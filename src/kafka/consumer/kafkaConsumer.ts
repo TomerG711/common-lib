@@ -49,27 +49,30 @@ export abstract class KafkaConsumer {
         }]);
     }
 
-    public async getMessage(callback: (serviceEvent: IceCubeEvent) => any) {
+    public async getMessage(callback: (serviceEvent: IceCubeEvent) => boolean) {
         await this.consumer.connect();
         await this.consumer.subscribe({topic: this.topic, fromBeginning: true});
         return this.consumer.run({
-            autoCommit: false,
-            eachMessage: async ({topic, partition, message}) => {
-                let message_headers = {};
-                for (let header in message.headers) {
-                    message_headers[header] = message.headers[header].toString();
-                }
-                if (this.filter != null) {
-                    if (!this.validateHeadersByFilter(message_headers)) {
+                autoCommit: false,
+                eachMessage: async ({topic, partition, message}) => {
+                    let message_headers = {};
+                    for (let header in message.headers) {
+                        message_headers[header] = message.headers[header].toString();
+                    }
+                    if (this.filter != null) {
+                        if (!this.validateHeadersByFilter(message_headers)) {
+                            this.commit(topic, partition, String(parseInt(message.offset) + 1));
+                            return;
+                        }
+                    }
+                    let message_value_object = JSON.parse(message.value.toString());
+                    // The callback will return "true" if the action succeeded in such case the message will committed
+                    if (callback(this.caster.kafkaMessageToIceCubeEvent(new KafkaMessage(message_value_object, message_headers)))) {
                         this.commit(topic, partition, String(parseInt(message.offset) + 1));
-                        return;
+                    } else {
+                        this.consumer.seek({topic: topic, partition: partition, offset: message.offset})
                     }
                 }
-                let message_value_object = JSON.parse(message.value.toString());
-                let callBackResult = callback(this.caster.kafkaMessageToIceCubeEvent(new KafkaMessage(message_value_object, message_headers)));
-                this.commit(topic, partition, String(parseInt(message.offset) + 1));
-                return callBackResult;
-            }
             }
         )
     }

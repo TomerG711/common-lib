@@ -23,6 +23,7 @@ async function main() {
 function callback(serviceEvent: IceCubeEvent) {
     console.log("in callback");
     console.log(serviceEvent);
+    return true;
 }
 
 (async function () {

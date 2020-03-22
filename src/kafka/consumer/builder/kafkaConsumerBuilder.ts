@@ -1,6 +1,7 @@
 import {logLevel, SASLOptions} from "kafkajs";
 import {KafkaConsumer} from "../kafkaConsumer";
 
+//TODO: Add the option to give costume configuration to kafka client
 export abstract class KafkaConsumerBuilder {
     public logLevel: logLevel;
     public clientId: string;
