@@ -45,6 +45,7 @@ data | object | Any relevant data about the action that was performed. For examp
   
 
 #### Headers 
+
 Property | Type | Description
 --- | --- | ---
 serviceName | String | The name of the destination service of this message 
@@ -54,6 +55,17 @@ operation | String | The operation name (for identifying the transaction)
 Produces messages to Kafka topic.
 Works transactionally only, as we decided we want to be sure each message arrived to every broker.
 
+#### Example
+```typescript sdffd
+let producerBuilder = new ServiceEventProducerBuilder();
+let producer = producerBuilder.setBrokers(brokers)
+                                .setClientId('test-client')
+                                .setLogLevel(logLevel.INFO)
+                                .setTopic('test')
+                                .setTransactionalId('id')
+                                .setSASLOptions(saslMechanism)
+                                .build();
+```
 
 ### Consumer
 Consumes messages from Kafka topic.
