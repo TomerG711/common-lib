@@ -74,9 +74,10 @@ transactionalId | string | Transaction Id for producer. Note that when a transac
 SASLOptions | KafkaJS.SASLOptions | Configuration for SASL communication with Kafka.
 
 SASLOptions:
+
 Property | Type | Description
 --- | --- | ---
-mechanism | 
+mechanism | string | plain/scram-sha-256/scram-sha-512/aws
 username | string | 
 password | string | 
 
