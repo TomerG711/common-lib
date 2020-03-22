@@ -5,7 +5,7 @@ actual communication with Kafka.
 
 ## KafkaMessage
 Representation of the actual message sent to Kafka.
-This object is build of 2 parts - the message(general object), and headers(another object, where each key is header name, 
+KafkaMessage is built of 2 parts - the message (general object), and headers (general JSON, where each key is header name, 
 and the value is the header value).
 
 ## Services separation
@@ -24,17 +24,28 @@ and the general kafka message (of which there is only 1).
 Representation of Kafka message for the services(for code usage).
 Here we have more explicit and detailed properties of what message should contain.
 
-####Body
+#### Body
 
-Properties | Type | Description
+Property | Type | Description
 --- | --- | ---
 TransactionId | String | Unique ID for transactions
 stepName | String | Current step in transaction, the action to be done 
 data | object | General object of the data, should include any relevant data for the destination service
 
+As mentioned above, there are two types - *TransactionManagerEvent*, and *ServiceEvent*.
+The *ServiceEvent* contain the following property as well:
 
-####Headers 
-Properties | Type | Description
+##### Result
+Properties:
+
+Property | Type | Description
+--- | --- | ---
+status | ResultStatus | SUCCESS/FAILED
+data | object | Any relevant data about the action that was performed. For example, a UUID of created flow on NiFi. On the other hand, could be error details upon failure
+  
+
+#### Headers 
+Property | Type | Description
 --- | --- | ---
 serviceName | String | The name of the destination service of this message 
 operation | String | The operation name (for identifying the transaction)
