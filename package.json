@@ -7,6 +7,6 @@
   },
   "scripts": {
     "build": "tsc",
-    "run": "node ./dist/main.js"
+    "run": "tsc && node ./dist/main.js"
   }
 }

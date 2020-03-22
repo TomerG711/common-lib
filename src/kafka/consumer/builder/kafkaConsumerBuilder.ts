@@ -8,6 +8,7 @@ export abstract class KafkaConsumerBuilder {
     public topic: string;
     public brokers: string[];
     public saslOptions?: SASLOptions;
+    public filter?: object;
 
     abstract build(): KafkaConsumer;
 
@@ -38,6 +39,11 @@ export abstract class KafkaConsumerBuilder {
 
     setSASLOptions(saslOptions: SASLOptions) {
         this.saslOptions = saslOptions;
+        return this;
+    }
+
+    setFilter(filter: object) {
+        this.filter = filter;
         return this;
     }
 }
