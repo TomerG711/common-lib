@@ -28,8 +28,8 @@ Here we have more explicit and detailed properties of what message should contai
 
 Property | Type | Description
 --- | --- | ---
-TransactionId | String | Unique ID for transactions
-stepName | String | Current step in transaction, the action to be done 
+TransactionId | string | Unique ID for transactions
+stepName | string | Current step in transaction, the action to be done 
 data | object | General object of the data, should include any relevant data for the destination service
 
 As mentioned above, there are two types - *TransactionManagerEvent*, and *ServiceEvent*.
@@ -48,15 +48,44 @@ data | object | Any relevant data about the action that was performed. For examp
 
 Property | Type | Description
 --- | --- | ---
-serviceName | String | The name of the destination service of this message 
-operation | String | The operation name (for identifying the transaction)
+serviceName | string | The name of the destination service of this message 
+operation | string | The operation name (for identifying the transaction)
+
+## Producer&Consumer - using the builder design pattern
+For both producer and consumer, we've decided it's best to use the builder design pattern. 
+We want to offer as much flexibility as possible, and the builder design pattern helps us to achieve that.
+Thus, the producer and the consumer should not be created directly, but using the builders.
 
 ### Producer
 Produces messages to Kafka topic.
-Works transactionally only, as we decided we want to be sure each message arrived to every broker.
+Works with transactions only, as we decided we want to be sure each message arrived to every broker.
+Since we have 2 implementations of consumers, and 2 of producers (for services and transaction manager), we have total of
+4 builders.
+
+Properties:
+
+Property | Type | Description
+--- | --- | ---
+brokers | string[] | List of brokers - hostname:port
+clientId | string | Kafka Client Id
+logLevel | KakfaJS.logLevel | KafkaJS log level configuration
+topic | string | Kafka topic name
+transactionalId | string | Transaction Id for producer. Note that when a transaction with specific Id is active, that producer cannot produce any other messages until it's committed.
+SASLOptions | KafkaJS.SASLOptions | Configuration for SASL communication with Kafka.
+
+SASLOptions:
+Property | Type | Description
+--- | --- | ---
+mechanism | 
+username | string | 
+password | string | 
+
+
 
 #### Example
-```typescript sdffd
+```typescript 
+let saslOptions: SASLOptions = {mechanism: 'scram-sha-256', username: 'admin', password: 'admin-secret'};
+let brokers = ['13.42.90.100:9092'];
 let producerBuilder = new ServiceEventProducerBuilder();
 let producer = producerBuilder.setBrokers(brokers)
                                 .setClientId('test-client')
@@ -65,6 +94,9 @@ let producer = producerBuilder.setBrokers(brokers)
                                 .setTransactionalId('id')
                                 .setSASLOptions(saslMechanism)
                                 .build();
+let message = new ServiceEvent('1', 'testStep', {'some-key': 'some-value'},
+        new Result(ResultStatus.SUCCESS, {'some-data': 'data'}), 'testService', 'operation-test');
+await producer.sendMessage(message);                                        
 ```
 
 ### Consumer
@@ -72,3 +104,6 @@ Consumes messages from Kafka topic.
 The consumer should get a callback listener that gets and IceCubeEvent as argument.
 The consumer will convert the general KafkaMessage to specific IceCube event and will  run the given callback, for each message
 received.
+
+### TransactionSteps
+Under construction...
