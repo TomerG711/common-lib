@@ -61,14 +61,14 @@ export abstract class KafkaConsumer {
                     }
                     if (this.filter != null) {
                         if (!this.validateHeadersByFilter(message_headers)) {
-                            this.commit(topic, partition, String(parseInt(message.offset) + 1));
+                            await this.commit(topic, partition, String(parseInt(message.offset) + 1));
                             return;
                         }
                     }
                     let message_value_object = JSON.parse(message.value.toString());
                     // The callback will return "true" if the action succeeded in such case the message will committed
                     if (callback(this.caster.kafkaMessageToIceCubeEvent(new KafkaMessage(message_value_object, message_headers)))) {
-                        this.commit(topic, partition, String(parseInt(message.offset) + 1));
+                        await this.commit(topic, partition, String(parseInt(message.offset) + 1));
                     } else {
                         this.consumer.seek({topic: topic, partition: partition, offset: message.offset})
                     }
