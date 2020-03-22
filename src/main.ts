@@ -1,7 +1,7 @@
 import {logLevel, SASLMechanism} from "kafkajs";
 import {Result, ResultStatus, ServiceEvent} from "./models/event/serviceEvent";
 import {IceCubeEvent} from "./models/event/iceCubeEvent";
-import {ServiceEventProducerBuilder} from "./kafka/prodoucer/builder/serviceEventProducerBuilder";
+import {ServiceEventProducerBuilder} from "./kafka/producer/builder/serviceEventProducerBuilder";
 import {TransactionManagerConsumerBuilder} from "./kafka/consumer/builder/transactionManagerConsumerBuilder";
 
 async function main() {
