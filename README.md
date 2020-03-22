@@ -24,6 +24,21 @@ and the general kafka message (of which there is only 1).
 Representation of Kafka message for the services(for code usage).
 Here we have more explicit and detailed properties of what message should contain.
 
+####Body
+
+Properties | Type | Description
+--- | --- | ---
+TransactionId | String | Unique ID for transactions
+stepName | String | Current step in transaction, the action to be done 
+data | object | General object of the data, should include any relevant data for the destination service
+
+
+####Headers 
+Properties | Type | Description
+--- | --- | ---
+serviceName | String | The name of the destination service of this message 
+operation | String | The operation name (for identifying the transaction)
+
 ### Producer
 Produces messages to Kafka topic.
 Works transactionally only, as we decided we want to be sure each message arrived to every broker.
