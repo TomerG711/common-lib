@@ -3,6 +3,7 @@ import {Result, ResultStatus, ServiceEvent} from "./models/event/serviceEvent";
 import {IceCubeEvent} from "./models/event/iceCubeEvent";
 import {ServiceEventProducerBuilder} from "./kafka/producer/builder/serviceEventProducerBuilder";
 import {TransactionManagerConsumerBuilder} from "./kafka/consumer/builder/transactionManagerConsumerBuilder";
+import {Session} from "./models/session/session";
 
 async function main() {
     let saslMechanism = {mechanism: 'scram-sha-256' as SASLMechanism, username: 'admin', password: 'admin-secret'};
@@ -20,10 +21,10 @@ async function main() {
     await producer.sendMessage(message);
 }
 
-function callback(serviceEvent: IceCubeEvent) {
+async function callback(session: Session) {
+    let serviceEvent: IceCubeEvent = session.getEvent();
     console.log("in callback");
     console.log(serviceEvent);
-    return true;
 }
 
 (async function () {
