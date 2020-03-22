@@ -1,8 +1,8 @@
 import {Consumer, Kafka} from "kafkajs";
 import {Caster} from "../../caster/caster";
-import {IceCubeEvent} from "../../models/event/iceCubeEvent";
 import {KafkaMessage} from "../../models/message/kafkaMessage";
 import {KafkaConsumerBuilder} from "./builder/kafkaConsumerBuilder";
+import {Session} from "../../models/session/session";
 
 
 export abstract class KafkaConsumer {
@@ -41,19 +41,19 @@ export abstract class KafkaConsumer {
         return true;
     }
 
-    private async commit(topic, partition, offest) {
+    private async commit(topic: string, partition: number, offset: string) {
         await this.consumer.commitOffsets([{
             topic: topic,
             partition: partition,
-            offset: offest
+            offset: String(parseInt(offset) + 1)
         }]);
     }
 
-    public async getMessage(callback: (serviceEvent: IceCubeEvent) => boolean) {
+    public async getMessage(callback: (serviceEvent: Session) => void, autoCommit: boolean = true) {
         await this.consumer.connect();
         await this.consumer.subscribe({topic: this.topic, fromBeginning: true});
         return this.consumer.run({
-                autoCommit: false,
+                autoCommit: autoCommit,
                 eachMessage: async ({topic, partition, message}) => {
                     let message_headers = {};
                     for (let header in message.headers) {
@@ -61,17 +61,13 @@ export abstract class KafkaConsumer {
                     }
                     if (this.filter != null) {
                         if (!this.validateHeadersByFilter(message_headers)) {
-                            await this.commit(topic, partition, String(parseInt(message.offset) + 1));
+                            await this.commit(topic, partition, message.offset);
                             return;
                         }
                     }
                     let message_value_object = JSON.parse(message.value.toString());
-                    // The callback will return "true" if the action succeeded in such case the message will committed
-                    if (callback(this.caster.kafkaMessageToIceCubeEvent(new KafkaMessage(message_value_object, message_headers)))) {
-                        await this.commit(topic, partition, String(parseInt(message.offset) + 1));
-                    } else {
-                        this.consumer.seek({topic: topic, partition: partition, offset: message.offset})
-                    }
+                    callback(new Session(this.consumer, topic, partition, message.offset,
+                        this.caster.kafkaMessageToIceCubeEvent(new KafkaMessage(message_value_object, message_headers))))
                 }
             }
         )
