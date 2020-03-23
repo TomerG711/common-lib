@@ -1,6 +1,5 @@
 import {KafkaProducerBuilder} from "./kafkaProducerBuilder";
-import {kafkaProducer} from "../kafkaProducer";
-import {ServiceEventProducer} from "../serviceEventProducer";
+import {KafkaProducer} from "../kafkaProducer";
 import {ServiceEventCaster} from "../../../caster/serviceEventCaster";
 
 export class ServiceEventProducerBuilder extends KafkaProducerBuilder {
@@ -10,8 +9,7 @@ export class ServiceEventProducerBuilder extends KafkaProducerBuilder {
         this.caster = new ServiceEventCaster();
     }
 
-    build(): kafkaProducer {
-        return new ServiceEventProducer(this);
+    build(): KafkaProducer {
+        return new KafkaProducer(this);
     }
-
 }

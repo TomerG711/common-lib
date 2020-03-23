@@ -5,15 +5,15 @@ import {Caster} from "../../caster/caster";
 import {KafkaProducerBuilder} from "./builder/kafkaProducerBuilder";
 
 
-export abstract class kafkaProducer {
+export class KafkaProducer {
 
     private kafkaClient: Kafka;
     private readonly topic: string;
     private producer: Producer;
-    protected caster: Caster;
+    private caster: Caster;
     private transaction: Transaction;
 
-    protected constructor(kafkaProducerBuilder: KafkaProducerBuilder) {
+    public constructor(kafkaProducerBuilder: KafkaProducerBuilder) {
         let kafkaConfig = {
             logLevel: kafkaProducerBuilder.logLevel,
             brokers: kafkaProducerBuilder.brokers,

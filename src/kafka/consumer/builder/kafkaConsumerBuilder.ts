@@ -1,5 +1,4 @@
 import {KafkaConsumer} from "../kafkaConsumer";
-import {Caster} from "../../../caster/caster";
 import {KafkaBuilder} from "../../kafkaBuilder";
 
 export abstract class KafkaConsumerBuilder extends KafkaBuilder {

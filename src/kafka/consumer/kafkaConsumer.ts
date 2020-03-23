@@ -5,15 +5,15 @@ import {KafkaConsumerBuilder} from "./builder/kafkaConsumerBuilder";
 import {Session} from "../../models/session/session";
 
 
-export abstract class KafkaConsumer {
+export class KafkaConsumer {
 
     private kafkaClient: Kafka;
     private readonly topic: string;
     private readonly consumer: Consumer;
-    protected caster: Caster;
+    private caster: Caster;
     private readonly filter: object = {};
 
-    protected constructor(kafkaConsumerBuilder: KafkaConsumerBuilder) {
+    public constructor(kafkaConsumerBuilder: KafkaConsumerBuilder) {
         let kafkaConfig = {
             logLevel: kafkaConsumerBuilder.logLevel,
             brokers: kafkaConsumerBuilder.brokers,

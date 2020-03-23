@@ -1,6 +1,5 @@
 import {KafkaProducerBuilder} from "./kafkaProducerBuilder";
-import {kafkaProducer} from "../kafkaProducer";
-import {TransactionManagerProducer} from "../transactionManagerProducer";
+import {KafkaProducer} from "../kafkaProducer";
 import {TransactionManagerCaster} from "../../../caster/transactionManagerCaster";
 
 export class TransactionManagerProducerBuilder extends KafkaProducerBuilder {
@@ -10,9 +9,8 @@ export class TransactionManagerProducerBuilder extends KafkaProducerBuilder {
         this.caster = new TransactionManagerCaster();
     }
 
-
-    build(): kafkaProducer {
-        return new TransactionManagerProducer(this);
+    build(): KafkaProducer {
+        return new KafkaProducer(this);
     }
 
 }
