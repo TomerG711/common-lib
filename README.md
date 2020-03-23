@@ -111,13 +111,18 @@ Properties:
 
 Property | Type | Description
 --- | --- | ---
-brokers | string[] | List of brokers - hostname:port
+brokers | string[] | List of brokers - [hostname1:port1, hostname2:port2]
 clientId | string | Kafka Client Id
 logLevel | KakfaJS.logLevel | KafkaJS log level configuration
 topic | string | Kafka topic name
 transactionalId | string | Transaction Id for producer. Note that when a transaction with specific Id is active, that producer cannot produce any other messages until it's committed.
 SASLOptions | KafkaJS.SASLOptions | Configuration for SASL communication with Kafka (further details in [Producer](#Producer))
-filter | object | A key-value pairs, where the key is a filter name, and the value should be regex to filter by
+filter(Optional) | object | A key-value pairs, where the key is a filter name, and the value should be regex to filter by. Filtering means that the message will be committed without calling the callback.
+
+For each message consumed, the Consumer will test every message's header against the provided filter.
+The message must contain every header that the filter has, and every header value must match the relevant regex.
+Note that if for  a message has 2 header that matches their regex in the filter, but the filter was provided with 3 headers,
+the message will be ignored - committed without calling the callback.
 
 #### Session
 
@@ -126,9 +131,9 @@ This way, the user can decide when to mark a message as success (commit), or a f
 
 Method |  Description
 ---  | ---
-commit | Commit to Kafka - mark this message as 'read'
-rollback | Seek back to this message in Kafka - meaning this event will be consumed again
-getEvent | Returns the IceCubeEvent that was consumed  
+commit() | Commit to Kafka - mark this message as 'read'
+rollback() | Seek back to this message in Kafka - meaning this event will be consumed again
+getEvent() | Returns the IceCubeEvent that was consumed  
 
 
 
@@ -152,6 +157,7 @@ let consumer = consumerBuilder.setBrokers(brokers)
                                 .setTopic('test')
                                 .setSASLOptions(saslOptions)
                                 .setGroupId('test-group')
+                                .setFilter({'serviceName': 'test-service'})                               
                                 .build();
 await consumer.getMessage(callback);
 ```
