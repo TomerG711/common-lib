@@ -17,7 +17,8 @@ export abstract class kafkaProducer {
         let kafkaConfig = {
             logLevel: kafkaProducerBuilder.logLevel,
             brokers: kafkaProducerBuilder.brokers,
-            clientId: kafkaProducerBuilder.clientId
+            clientId: kafkaProducerBuilder.clientId,
+            ...kafkaProducerBuilder.additionalProperties
         };
         if (kafkaProducerBuilder.saslOptions != null) {
             kafkaConfig["sasl"] = kafkaProducerBuilder.saslOptions;

@@ -9,7 +9,7 @@ async function main() {
     let saslOptions: SASLOptions = {mechanism: 'scram-sha-256', username: 'admin', password: 'admin-secret'};
     let brokers = ['onmydick.com:9092'];
     let producerBuilder = new ServiceEventProducerBuilder();
-    let producer = producerBuilder.setBrokers(brokers).setClientId('test-client').setLogLevel(logLevel.INFO).setTopic('test').setTransactionalId('id').setSASLOptions(saslOptions).build();
+    let producer = producerBuilder.setBrokers(brokers).setClientId('test-client').setLogLevel(logLevel.INFO).setRequestTimeout(30000).setTopic('test').setTransactionalId('id').setSASLOptions(saslOptions).build();
     let message = new ServiceEvent('1', 'testStep', {'some-key': 'some-value'},
         new Result(ResultStatus.SUCCESS, {'some-data': 'data'}), 'testService', 'operation-test');
     await producer.sendMessage(message);

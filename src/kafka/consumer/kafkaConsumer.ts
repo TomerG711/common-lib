@@ -11,13 +11,14 @@ export abstract class KafkaConsumer {
     private readonly topic: string;
     private readonly consumer: Consumer;
     protected caster: Caster;
-    private readonly filter: object;
+    private readonly filter: object = {};
 
     protected constructor(kafkaConsumerBuilder: KafkaConsumerBuilder) {
         let kafkaConfig = {
             logLevel: kafkaConsumerBuilder.logLevel,
             brokers: kafkaConsumerBuilder.brokers,
-            clientId: kafkaConsumerBuilder.clientId
+            clientId: kafkaConsumerBuilder.clientId,
+            ...kafkaConsumerBuilder.additionalProperties
         };
         if (kafkaConsumerBuilder.saslOptions != null) {
             kafkaConfig["sasl"] = kafkaConsumerBuilder.saslOptions;
@@ -25,8 +26,8 @@ export abstract class KafkaConsumer {
         this.kafkaClient = new Kafka(kafkaConfig);
         this.topic = kafkaConsumerBuilder.topic;
         this.consumer = this.kafkaClient.consumer({groupId: kafkaConsumerBuilder.groupId});
+
         //initialise the filter
-        this.filter = {};
         for (let key in kafkaConsumerBuilder.filter) {
             this.filter[key] = new RegExp(kafkaConsumerBuilder.filter[key]);
         }
