@@ -2,7 +2,17 @@
 This library will define the standard for communication between our services, from the properties of the events to the 
 actual communication with Kafka.
 
+## Table of contents
 
+1. [ KakfkaMessage ](#KafkaMessage)
+2. [ Services separation ](#Services separation)
+3. [ IceCubeEvent ](#IceCubeEvent)
+    
+    3.1 [ Body ](#Body)
+        3.1.1 [ Result ](#Result)
+    3.2 [ Headers ](#Headers)
+4. [ Producer&Consumer ](#Producer&Consumer - using the builder design pattern)    
+ 
 ## KafkaMessage
 Representation of the actual message sent to Kafka.
 KafkaMessage is built of 2 parts - the message (general object), and headers (general JSON, where each key is header name, 
