@@ -1,4 +1,4 @@
-import {Producer, Kafka, logLevel, SASLOptions} from "kafkajs";
+import {Producer, Kafka} from "kafkajs";
 import {KafkaMessage} from "../../models/message/kafkaMessage";
 import {IceCubeEvent} from "../../models/event/iceCubeEvent";
 import {Caster} from "../../caster/caster";

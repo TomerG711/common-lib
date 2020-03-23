@@ -3,13 +3,14 @@ import {KafkaConsumer} from "../kafkaConsumer";
 
 //TODO: Add the option to give costume configuration to kafka client
 export abstract class KafkaConsumerBuilder {
+
     public logLevel: logLevel;
     public clientId: string;
     public groupId: string;
     public topic: string;
     public brokers: string[];
     public saslOptions?: SASLOptions;
-    public filter?: object;
+    public filter: object;
 
     abstract build(): KafkaConsumer;
 
