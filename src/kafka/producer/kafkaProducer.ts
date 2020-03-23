@@ -5,15 +5,15 @@ import {Caster} from "../../caster/caster";
 import {KafkaProducerBuilder} from "./builder/kafkaProducerBuilder";
 
 
-export abstract class kafkaProducer {
+export class KafkaProducer {
 
     private kafkaClient: Kafka;
     private readonly topic: string;
     private producer: Producer;
-    protected caster: Caster;
+    private caster: Caster;
     private transaction: Transaction;
 
-    protected constructor(kafkaProducerBuilder: KafkaProducerBuilder) {
+    public constructor(kafkaProducerBuilder: KafkaProducerBuilder) {
         let kafkaConfig = {
             logLevel: kafkaProducerBuilder.logLevel,
             brokers: kafkaProducerBuilder.brokers,
@@ -25,6 +25,7 @@ export abstract class kafkaProducer {
         }
         this.kafkaClient = new Kafka(kafkaConfig);
         this.topic = kafkaProducerBuilder.topic;
+        this.caster = kafkaProducerBuilder.getCaster();
         this.producer = this.kafkaClient.producer({
             idempotent: true,
             maxInFlightRequests: 1,
@@ -32,6 +33,11 @@ export abstract class kafkaProducer {
         });
     }
 
+    /**
+     *
+     * @param iceCubeEvent
+     * @throws CastingEventError - upon failure casting from IceCubeEvent to KafkaMessage
+     */
     public async sendMessage(iceCubeEvent: IceCubeEvent) {
         this.transaction = await this.producer.transaction();
         try {

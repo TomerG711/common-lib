@@ -1,10 +1,11 @@
-import {Caster} from "./caster";
+import {Caster, tryCatchDecorator} from "./caster";
 import {TransactionManagerEvent} from "../models/event/transactionManagerEvent";
 import {KafkaMessage} from "../models/message/kafkaMessage";
 import {IHeaders} from "kafkajs";
 
 export class TransactionManagerCaster implements Caster {
 
+    @tryCatchDecorator()
     iceCubeEventToKafkaMessage(transactionManagerEvent: TransactionManagerEvent): KafkaMessage {
         let headers: IHeaders = {
             serviceName: transactionManagerEvent.serviceName,
@@ -18,6 +19,7 @@ export class TransactionManagerCaster implements Caster {
         return new KafkaMessage(value, headers);
     }
 
+    @tryCatchDecorator()
     kafkaMessageToIceCubeEvent(kafkaMessage: KafkaMessage): TransactionManagerEvent {
         let transactionId = kafkaMessage.value["transactionId"];
         let stepName = kafkaMessage.value["stepName"];

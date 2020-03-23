@@ -1,9 +1,35 @@
 import {IceCubeEvent} from "../models/event/iceCubeEvent";
 import {KafkaMessage} from "../models/message/kafkaMessage";
+import {CastingEventError} from "../errors/castingEventError";
 
-export interface Caster {
-
-    iceCubeEventToKafkaMessage(iceCubeEvent: IceCubeEvent): KafkaMessage;
-
-    kafkaMessageToIceCubeEvent(kafkaMessage: KafkaMessage): IceCubeEvent;
+export function tryCatchDecorator() {
+    return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
+        let originalMethod = descriptor.value;
+        descriptor.value = (...args) => {
+            try {
+                originalMethod(args);
+            } catch (e) {
+                throw new CastingEventError('Failed casting event to message or message to event', e.message);
+            }
+        }
+    }
 }
+
+
+export abstract class Caster {
+
+    /**
+     *
+     * @param iceCubeEvent
+     * @throws CastingEventError upon failure
+     */
+    public abstract iceCubeEventToKafkaMessage(iceCubeEvent: IceCubeEvent): KafkaMessage;
+
+    /**
+     *
+     * @param kafkaMessage
+     * @throws CastingEventError upon failure
+     */
+    public abstract kafkaMessageToIceCubeEvent(kafkaMessage: KafkaMessage): IceCubeEvent;
+}
+

@@ -1,4 +1,5 @@
 import {logLevel, SASLOptions} from "kafkajs";
+import {Caster} from "../caster/caster";
 
 export abstract class KafkaBuilder {
     public logLevel: logLevel;
@@ -7,6 +8,7 @@ export abstract class KafkaBuilder {
     public brokers: string[];
     public saslOptions?: SASLOptions;
     public additionalProperties: object = {};
+    protected caster: Caster;
 
 
     setLogLevel(logLevel: logLevel) {
@@ -62,6 +64,10 @@ export abstract class KafkaBuilder {
     setInitialRetryTime(initialRetryTime: number) {
         this.additionalProperties["initialRetryTime"] = initialRetryTime;
         return this;
+    }
+
+    getCaster(): Caster {
+        return this.caster;
     }
 
 }

@@ -5,15 +5,15 @@ import {KafkaConsumerBuilder} from "./builder/kafkaConsumerBuilder";
 import {Session} from "../../models/session/session";
 
 
-export abstract class KafkaConsumer {
+export class KafkaConsumer {
 
     private kafkaClient: Kafka;
     private readonly topic: string;
     private readonly consumer: Consumer;
-    protected caster: Caster;
+    private caster: Caster;
     private readonly filter: object = {};
 
-    protected constructor(kafkaConsumerBuilder: KafkaConsumerBuilder) {
+    public constructor(kafkaConsumerBuilder: KafkaConsumerBuilder) {
         let kafkaConfig = {
             logLevel: kafkaConsumerBuilder.logLevel,
             brokers: kafkaConsumerBuilder.brokers,
@@ -25,6 +25,7 @@ export abstract class KafkaConsumer {
         }
         this.kafkaClient = new Kafka(kafkaConfig);
         this.topic = kafkaConsumerBuilder.topic;
+        this.caster = kafkaConsumerBuilder.getCaster();
         this.consumer = this.kafkaClient.consumer({groupId: kafkaConsumerBuilder.groupId});
 
         //initialise the filter
@@ -50,6 +51,12 @@ export abstract class KafkaConsumer {
         }]);
     }
 
+    /**
+     *
+     * @param callback
+     * @param autoCommit
+     * @throws  CastingEventError upon failure casting from KafkaMessage to IceCubeEvent
+     */
     public async getMessage(callback: (serviceEvent: Session) => void, autoCommit: boolean = true) {
         await this.consumer.connect();
         await this.consumer.subscribe({topic: this.topic, fromBeginning: true});
