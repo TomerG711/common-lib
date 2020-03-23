@@ -1,4 +1,4 @@
-import {Producer, Kafka} from "kafkajs";
+import {Kafka, Producer} from "kafkajs";
 import {KafkaMessage} from "../../models/message/kafkaMessage";
 import {IceCubeEvent} from "../../models/event/iceCubeEvent";
 import {Caster} from "../../caster/caster";
@@ -48,5 +48,9 @@ export abstract class kafkaProducer {
             await transaction.abort();
             throw e;
         }
+    }
+
+    public async disconnect() {
+        await this.producer.disconnect()
     }
 }
