@@ -2,27 +2,11 @@
 This library will define the standard for communication between our services, from the properties of the events to the 
 actual communication with Kafka.
 
-## Table of contents
-
-1. [ KafkaMessage ](#KafkaMessage)
-2. [ Services separation ](#ServicesSeparation)
-3. [ IceCubeEvent ](#IceCubeEvent)    
-
-    3.1 [ Body ](#IceCubeEventBody)
-    
-        3.1.1 [ Result ](#Result)
-        
-    3.2 [ Headers ](#Headers)
-    
-4. [ Producer&Consumer ](#Producer&Consumer - using the builder design pattern)    
-
-<a name="KafkaMessage"></a>
 ## KafkaMessage
 Representation of the actual message sent to Kafka.
 KafkaMessage is built of 2 parts - the message (general object), and headers (general JSON, where each key is header name, 
 and the value is the header value).
 
-<a name="ServicesSeparation"></a>
 ## Services separation
 Any of the the following contain 2 implementations:
 1. For transaction manager service
@@ -35,12 +19,10 @@ manager should contain results about the actions they did, and thus the 2 object
 Therefore, we created 2 consumers and 2 producers. We have 2 kind of events, and we need to be able to do the casting between each event
 and the general kafka message (of which there is only 1).
 
-<a name="IceCubeEvent"></a>
 ### IceCubeEvent
 Representation of Kafka message for the services(for code usage).
 Here we have more explicit and detailed properties of what message should contain.
 
-<a name="IceCubeEventBody"></a>
 #### Body
 
 Property | Type | Description
@@ -52,7 +34,6 @@ data | object | General object of the data, should include any relevant data for
 As mentioned above, there are two types - *TransactionManagerEvent*, and *ServiceEvent*.
 The *ServiceEvent* contain the following property as well:
 
-<a name="Result"></a>
 ##### Result
 Properties:
 
