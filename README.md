@@ -102,9 +102,47 @@ await producer.sendMessage(message);
 
 ### Consumer
 Consumes messages from Kafka topic.
-The consumer should get a callback listener that gets and IceCubeEvent as argument.
-The consumer will convert the general KafkaMessage to specific IceCube event and will  run the given callback, for each message
+The consumer should get a callback listener that gets a Session as an argument, and another boolean that indicates whether to 
+auto commit or not. If set to false, the user must commit manually for each message.
+
+The consumer will convert the general KafkaMessage to specific IceCubeEvent and will run the given callback, for each message
 received.
+
+#### Session
+
+Represents the messages that was consumed from Kafka, after it was converted, including functionality to commit/rollback when done.
+
+Method |  Description
+---  | ---
+commit | Commit to Kafka - mark this message as 'read'
+rollback | Seek back to this message in Kafka - meaning this event will be consumed again
+getEvent | Returns the IceCubeEvent that was consumed  
+
+
+
+#### Example
+```typescript
+async function callback(session: Session) {
+    try {
+        let serviceEvent: IceCubeEvent = session.getEvent();
+        console.log(serviceEvent);
+        await session.commit();    
+    } catch (e) {
+        session.rollback();
+    }
+}
+
+
+let consumerBuilder = new TransactionManagerConsumerBuilder();
+let consumer = consumerBuilder.setBrokers(brokers)
+                                .setClientId('test-client')
+                                .setLogLevel(logLevel.INFO)
+                                .setTopic('test')
+                                .setSASLOptions(saslOptions)
+                                .setGroupId('test-group')
+                                .build();
+await consumer.getMessage(callback);
+```
 
 ### TransactionSteps
 Under construction...

@@ -22,9 +22,13 @@ async function main() {
 }
 
 async function callback(session: Session) {
-    let serviceEvent: IceCubeEvent = session.getEvent();
-    console.log("in callback");
-    console.log(serviceEvent);
+    try {
+        let serviceEvent: IceCubeEvent = session.getEvent();
+        console.log(serviceEvent);
+        await session.commit();
+    } catch (e) {
+        session.rollback();
+    }
 }
 
 (async function () {
