@@ -24,6 +24,7 @@ export abstract class KafkaConsumer {
         }
         this.kafkaClient = new Kafka(kafkaConfig);
         this.topic = kafkaConsumerBuilder.topic;
+        this.caster = kafkaConsumerBuilder.getCaster();
         this.consumer = this.kafkaClient.consumer({groupId: kafkaConsumerBuilder.groupId});
         //initialise the filter
         this.filter = {};

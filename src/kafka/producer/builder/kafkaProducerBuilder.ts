@@ -1,5 +1,6 @@
 import {logLevel, SASLOptions} from "kafkajs";
 import {kafkaProducer} from "../kafkaProducer";
+import {Caster} from "../../../caster/caster";
 
 //TODO: Add the option to give costume configuration to kafka client
 export abstract class KafkaProducerBuilder {
@@ -9,6 +10,7 @@ export abstract class KafkaProducerBuilder {
     public brokers: string[];
     public transactionalId: string;
     public saslOptions?: SASLOptions;
+    protected caster: Caster;
 
     abstract build(): kafkaProducer;
 
@@ -40,5 +42,9 @@ export abstract class KafkaProducerBuilder {
     setSASLOptions(saslOptions: SASLOptions) {
         this.saslOptions = saslOptions;
         return this;
+    }
+
+    getCaster(): Caster {
+        return this.caster;
     }
 }

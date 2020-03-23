@@ -24,6 +24,7 @@ export abstract class kafkaProducer {
         }
         this.kafkaClient = new Kafka(kafkaConfig);
         this.topic = kafkaProducerBuilder.topic;
+        this.caster = kafkaProducerBuilder.getCaster();
         this.producer = this.kafkaClient.producer({
             idempotent: true,
             maxInFlightRequests: 1,
