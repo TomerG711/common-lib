@@ -71,6 +71,7 @@ logLevel | KakfaJS.logLevel | KafkaJS log level configuration
 topic | string | Kafka topic name
 transactionalId | string | Transaction Id for producer. Note that when a transaction with specific Id is active, that producer cannot produce any other messages until it's committed.
 SASLOptions | KafkaJS.SASLOptions | Configuration for SASL communication with Kafka.
+additionalProperties | object | Additional configuraions to the client
 
 SASLOptions:
 
@@ -80,8 +81,16 @@ mechanism | string | plain/scram-sha-256/scram-sha-512/aws
 username | string | Kafka username
 password | string | Kafka password
 
+additionalProperties:
 
-
+Property | Type | Description | Default(ms)
+--- | --- | --- | ---
+authenticationTimeout | number | Timeout in ms for authentication requests | 1000
+reauthenticationThreshold | number | When periodic reauthentication (connections.max.reauth.ms) is configured on the broker side, reauthenticate when reauthenticationThreshold milliseconds remain of session lifetime. | 10000
+connectionTimeout | number | Time in milliseconds to wait for a successful connection | 1000
+requestTimeout | number | Time in milliseconds to wait for a successful request | 30000
+maxRetryTime | number | Maximum wait time for a retry in milliseconds | 30000
+initialRetryTime | number | Initial value used to calculate the retry in milliseconds | 300
 #### Example
 ```typescript 
 let saslOptions: SASLOptions = {mechanism: 'scram-sha-256', username: 'admin', password: 'admin-secret'};
@@ -117,6 +126,7 @@ logLevel | KakfaJS.logLevel | KafkaJS log level configuration
 topic | string | Kafka topic name
 transactionalId | string | Transaction Id for producer. Note that when a transaction with specific Id is active, that producer cannot produce any other messages until it's committed.
 SASLOptions | KafkaJS.SASLOptions | Configuration for SASL communication with Kafka (further details in [Producer](#Producer))
+additionalProperties | object | Additional configuraions to the client (further details in [Producer](#Producer))
 filter(Optional) | object | A key-value pairs, where the key is a filter name, and the value should be regex to filter by. Filtering means that the message will be committed without calling the callback.
 
 For each message consumed, the Consumer will test every message's header against the provided filter.
