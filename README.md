@@ -117,7 +117,8 @@ clientId | string | Kafka Client Id
 logLevel | KakfaJS.logLevel | KafkaJS log level configuration
 topic | string | Kafka topic name
 transactionalId | string | Transaction Id for producer. Note that when a transaction with specific Id is active, that producer cannot produce any other messages until it's committed.
-SASLOptions | KafkaJS.SASLOptions | Configuration for SASL communication with Kafka (described in [Producer](#Producer)
+SASLOptions | KafkaJS.SASLOptions | Configuration for SASL communication with Kafka (further details in [Producer](#Producer))
+filter | object | A key-value pairs, where the key is a filter name, and the value should be regex to filter by
 
 #### Session
 
