@@ -9,7 +9,7 @@ export abstract class KafkaConsumer {
 
     private kafkaClient: Kafka;
     private readonly topic: string;
-    private consumer: Consumer;
+    private readonly consumer: Consumer;
     protected caster: Caster;
     private readonly filter: object;
 
@@ -71,5 +71,9 @@ export abstract class KafkaConsumer {
                 }
             }
         )
+    }
+
+    public async disconnect() {
+        await this.consumer.disconnect()
     }
 }
