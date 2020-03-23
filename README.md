@@ -78,8 +78,8 @@ SASLOptions:
 Property | Type | Description
 --- | --- | ---
 mechanism | string | plain/scram-sha-256/scram-sha-512/aws
-username | string | 
-password | string | 
+username | string | Kafka username
+password | string | Kafka password
 
 
 
@@ -93,7 +93,7 @@ let producer = producerBuilder.setBrokers(brokers)
                                 .setLogLevel(logLevel.INFO)
                                 .setTopic('test')
                                 .setTransactionalId('id')
-                                .setSASLOptions(saslMechanism)
+                                .setSASLOptions(saslOptions)
                                 .build();
 let message = new ServiceEvent('1', 'testStep', {'some-key': 'some-value'},
         new Result(ResultStatus.SUCCESS, {'some-data': 'data'}), 'testService', 'operation-test');
@@ -108,9 +108,21 @@ auto commit or not. If set to false, the user must commit manually for each mess
 The consumer will convert the general KafkaMessage to specific IceCubeEvent and will run the given callback, for each message
 received.
 
+Properties:
+
+Property | Type | Description
+--- | --- | ---
+brokers | string[] | List of brokers - hostname:port
+clientId | string | Kafka Client Id
+logLevel | KakfaJS.logLevel | KafkaJS log level configuration
+topic | string | Kafka topic name
+transactionalId | string | Transaction Id for producer. Note that when a transaction with specific Id is active, that producer cannot produce any other messages until it's committed.
+SASLOptions | KafkaJS.SASLOptions | Configuration for SASL communication with Kafka (described in [Producer](#Producer)
+
 #### Session
 
 Represents the messages that was consumed from Kafka, after it was converted, including functionality to commit/rollback when done.
+This way, the user can decide when to mark a message as success (commit), or a failure (rollback).
 
 Method |  Description
 ---  | ---

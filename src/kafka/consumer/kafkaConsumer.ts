@@ -66,7 +66,7 @@ export abstract class KafkaConsumer {
                         }
                     }
                     let message_value_object = JSON.parse(message.value.toString());
-                    callback(new Session(this.consumer, topic, partition, message.offset,
+                    await callback(new Session(this.consumer, topic, partition, message.offset,
                         this.caster.kafkaMessageToIceCubeEvent(new KafkaMessage(message_value_object, message_headers))))
                 }
             }
