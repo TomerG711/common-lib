@@ -1,4 +1,4 @@
-import {Kafka, Producer} from "kafkajs";
+import {Kafka, Producer, Transaction} from "kafkajs";
 import {KafkaMessage} from "../../models/message/kafkaMessage";
 import {IceCubeEvent} from "../../models/event/iceCubeEvent";
 import {Caster} from "../../caster/caster";
@@ -11,7 +11,7 @@ export abstract class kafkaProducer {
     private readonly topic: string;
     private producer: Producer;
     protected caster: Caster;
-
+    private transaction: Transaction;
 
     protected constructor(kafkaProducerBuilder: KafkaProducerBuilder) {
         let kafkaConfig = {
@@ -32,10 +32,10 @@ export abstract class kafkaProducer {
     }
 
     public async sendMessage(iceCubeEvent: IceCubeEvent) {
-        let transaction = await this.producer.transaction();
+        this.transaction = await this.producer.transaction();
         try {
             let message: KafkaMessage = this.caster.iceCubeEventToKafkaMessage((iceCubeEvent));
-            await transaction.send({
+            await this.transaction.send({
                 topic: this.topic,
                 messages: [{
                     key: iceCubeEvent.transactionId,
@@ -43,14 +43,18 @@ export abstract class kafkaProducer {
                     headers: message.headers
                 }]
             });
-            await transaction.commit();
+            await this.transaction.commit();
         } catch (e) {
-            await transaction.abort();
+            await this.transaction.abort();
             throw e;
         }
     }
 
     public async disconnect() {
-        await this.producer.disconnect()
+        try {
+            await this.transaction.commit();
+        } finally {
+            await this.producer.disconnect();
+        }
     }
 }

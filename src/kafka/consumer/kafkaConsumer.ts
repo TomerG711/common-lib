@@ -74,6 +74,6 @@ export abstract class KafkaConsumer {
     }
 
     public async disconnect() {
-        await this.consumer.disconnect()
+        await this.consumer.disconnect();
     }
 }
