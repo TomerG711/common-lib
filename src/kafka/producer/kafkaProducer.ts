@@ -31,6 +31,11 @@ export abstract class kafkaProducer {
         });
     }
 
+    /**
+     *
+     * @param iceCubeEvent
+     * @throws CastingEventError - upon failure casting from IceCubeEvent to KafkaMessage
+     */
     public async sendMessage(iceCubeEvent: IceCubeEvent) {
         this.transaction = await this.producer.transaction();
         try {

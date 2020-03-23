@@ -49,6 +49,12 @@ export abstract class KafkaConsumer {
         }]);
     }
 
+    /**
+     *
+     * @param callback
+     * @param autoCommit
+     * @throws  CastingEventError upon failure casting from KafkaMessage to IceCubeEvent
+     */
     public async getMessage(callback: (serviceEvent: Session) => void, autoCommit: boolean = true) {
         await this.consumer.connect();
         await this.consumer.subscribe({topic: this.topic, fromBeginning: true});
