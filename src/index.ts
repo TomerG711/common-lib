@@ -10,7 +10,9 @@ import {KafkaMessage} from "./models/message/kafkaMessage";
 import {ServiceEvent} from "./models/event/serviceEvent";
 import {TransactionManagerEvent} from "./models/event/transactionManagerEvent";
 import {Session} from "./models/session/session";
+import {logLevel, SASLOptions} from "kafkajs";
 
+//For our types
 export {
     CastingEventError,
     KafkaConsumer,
@@ -24,4 +26,10 @@ export {
     ServiceEvent,
     TransactionManagerEvent,
     Session
+}
+
+//For KafkaJS types
+export {
+    SASLOptions,
+    logLevel
 }
