@@ -7,7 +7,7 @@ export function tryCatchDecorator() {
         let originalMethod = descriptor.value;
         descriptor.value = (...args) => {
             try {
-                originalMethod(args);
+                return originalMethod(...args);
             } catch (e) {
                 throw new CastingEventError('Failed casting event to message or message to event', e.message);
             }
